@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Seettu with Contribution Summary</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #00ff99;
+      font-family: sans-serif;
+      text-align: center;
+      padding: 30px;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+    }
+
+    .month-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      margin: 30px 0;
+    }
+
+    .month-button {
+      width: 200px;
+      padding: 12px 24px;
+      background: #000;
+      color: white;
+      border: 2px solid #00ff99;
+      border-radius: 10px;
+      cursor: pointer;
+      position: relative;
+      transition: 0.3s;
+    }
+
+    .month-button:hover {
+      background-color: #00ff99;
+      color: black;
+      transform: scale(1.05);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: #222;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: left;
+      width: 90%;
+      max-width: 600px;
+    }
+
+    .form-buttons {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .form-buttons button {
+      margin: 0 10px;
+      padding: 10px 20px;
+      border: none;
+      background: #00ff99;
+      color: #000;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .member-row {
+      background: #1a1a1a;
+      padding: 10px;
+      margin-bottom: 5px;
+      border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .member-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .summary-box {
+      margin-top: 20px;
+      font-size: 1.1em;
+      text-align: center;
+      color: #00ffaa;
+    }
+
+    .member-row input[type="number"] {
+      width: 100px;
+    }
+
+    .member-row input[type="checkbox"] {
+      transform: scale(1.2);
+    }
+
+    @media (max-width: 480px) {
+      .month-button {
+        width: 90%;
+        font-size: 1em;
+      }
+
+      .modal-content {
+        width: 95%;
+        font-size: 0.95em;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📅 Seettu Months - August to June</h1>
+
+ <div class="month-container">
+  <button class="month-button" data-month="August" onclick="openForm('August')" title="Dilum">August</button>
+  <button class="month-button" data-month="September" onclick="openForm('September')" title="Menuri">September</button>
+  <button class="month-button" data-month="October" onclick="openForm('October')" title="Thilini">October</button>
+  <button class="month-button" data-month="November" onclick="openForm('November')" title="Anushika">November</button>
+  <button class="month-button" data-month="December" onclick="openForm('December')" title="Sandaru">December</button>
+  <button class="month-button" data-month="January" onclick="openForm('January')" title="Geethika">January</button>
+  <button class="month-button" data-month="February" onclick="openForm('February')" title="Chathuranga">February</button>
+  <button class="month-button" data-month="March" onclick="openForm('March')" title="Chamindu">March</button>
+  <button class="month-button" data-month="April" onclick="openForm('April')" title="Sachintha">April</button>
+  <button class="month-button" data-month="May" onclick="openForm('May')" title="Nisansala">May</button>
+  <button class="month-button" data-month="June" onclick="openForm('June')" title="Malshani">June</button>
+</div>
+
+  <div id="subForm" class="modal">
+    <div class="modal-content">
+      <h2 id="formTitle">📋 Contributions</h2>
+      <div id="memberList"></div>
+      <div class="summary-box" id="totalPaidBox">Total Paid: Rs. 0</div>
+      <div class="form-buttons">
+        <button onclick="saveData()">💾 Save</button>
+        <button onclick="editForm()">✏️ Edit</button>
+        <button onclick="closeForm()">❌ Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const members = [
+      "Dium", "Menuri", "Thilini", "Anushika", "Sandaru", "Geethika",
+      "Chathuranga", "Chamindu", "Sachintha", "Nisansala", "Malshani"
+    ];
+
+    let currentMonth = "";
+    let dataStore = {};
+    let isEditable = false;
+
+    window.onload = () => {
+      const saved = localStorage.getItem("seettuData");
+      if (saved) dataStore = JSON.parse(saved);
+    };
+
+    function openForm(month) {
+      currentMonth = month;
+      isEditable = false;
+      document.getElementById("formTitle").textContent = `📋 ${month} Contributions - Rs. 10,000 Each`;
+      document.getElementById("subForm").style.display = "flex";
+      renderForm(month);
+    }
+
+    function renderForm(month) {
+      const container = document.getElementById("memberList");
+      container.innerHTML = "";
+
+      let totalPaid = 0;
+
+      members.forEach(member => {
+        const value = (dataStore[month] && dataStore[month][member]?.amount) || 10000;
+        const paid = (dataStore[month] && dataStore[month][member]?.paid) || false;
+        if (paid) totalPaid += Number(value);
+
+        const row = document.createElement("div");
+        row.className = "member-row";
+
+        row.innerHTML = `
+          <div class="member-left">
+            <input type="checkbox" id="chk-${member}" ${paid ? "checked" : ""} onchange="togglePaid('${member}', this.checked)">
+            <span>${member}</span>
+          </div>
+          ${isEditable ?
+            `<input type="number" id="amount-${member}" value="${value}">` :
+            `<span>Rs. ${value}</span>`
+          }
+        `;
+
+        container.appendChild(row);
+      });
+
+      document.getElementById("totalPaidBox").textContent = `Total Paid: Rs. ${totalPaid}`;
+    }
+
+    function togglePaid(member, checked) {
+      if (!dataStore[currentMonth]) dataStore[currentMonth] = {};
+      if (!dataStore[currentMonth][member]) dataStore[currentMonth][member] = { amount: 10000 };
+      dataStore[currentMonth][member].paid = checked;
+      saveToLocal();
+      renderForm(currentMonth);
+    }
+
+    function editForm() {
+      isEditable = true;
+      renderForm(currentMonth);
+    }
+
+    function saveData() {
+      if (!isEditable) {
+        alert("Click ✏️ Edit before saving.");
+        return;
+      }
+
+      if (!dataStore[currentMonth]) dataStore[currentMonth] = {};
+
+      members.forEach(member => {
+        const input = document.getElementById(`amount-${member}`);
+        if (input) {
+          const paid = dataStore[currentMonth][member]?.paid || false;
+          dataStore[currentMonth][member] = {
+            amount: input.value,
+            paid: paid
+          };
+        }
+      });
+
+      saveToLocal();
+      isEditable = false;
+      renderForm(currentMonth);
+    }
+
+    function closeForm() {
+      document.getElementById("subForm").style.display = "none";
+    }
+
+    function saveToLocal() {
+      localStorage.setItem("seettuData", JSON.stringify(dataStore));
+    }
+  </script>
+</body>
+</html>
