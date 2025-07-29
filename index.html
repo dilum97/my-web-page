@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Seettu with Contribution Summary</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       background-color: #111;
@@ -18,15 +19,15 @@
 
     .month-container {
       display: flex;
-      flex-direction: column;
-      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
       gap: 15px;
       margin: 30px 0;
     }
 
     .month-button {
-      width: 200px;
-      padding: 12px 24px;
+      width: 130px;
+      padding: 12px;
       background: #000;
       color: white;
       border: 2px solid #00ff99;
@@ -42,6 +43,27 @@
       transform: scale(1.05);
     }
 
+    .month-button::after {
+      content: attr(title);
+      position: absolute;
+      bottom: 110%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #00ff99;
+      color: #000;
+      padding: 5px 10px;
+      border-radius: 5px;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      font-size: 0.9em;
+    }
+
+    .month-button:hover::after {
+      opacity: 1;
+    }
+
     .modal {
       display: none;
       position: fixed;
@@ -55,11 +77,12 @@
 
     .modal-content {
       background: #222;
-      padding: 30px;
+      padding: 20px;
       border-radius: 10px;
       text-align: left;
-      width: 90%;
+      width: 95%;
       max-width: 600px;
+      box-sizing: border-box;
     }
 
     .form-buttons {
@@ -86,6 +109,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
     }
 
     .member-left {
@@ -110,35 +134,42 @@
     }
 
     @media (max-width: 480px) {
-      .month-button {
-        width: 90%;
-        font-size: 1em;
+      h1 {
+        font-size: 1.2em;
       }
-
+      .month-button {
+        width: 100px;
+        font-size: 0.85em;
+        padding: 10px;
+      }
       .modal-content {
-        width: 95%;
-        font-size: 0.95em;
+        font-size: 0.9em;
+        padding: 15px;
+      }
+      .form-buttons button {
+        margin: 5px;
+        padding: 8px 15px;
+        font-size: 0.9em;
       }
     }
   </style>
 </head>
 <body>
-
   <h1>📅 Seettu Months - August to June</h1>
 
- <div class="month-container">
-  <button class="month-button" data-month="August" onclick="openForm('August')" title="Dilum">August</button>
-  <button class="month-button" data-month="September" onclick="openForm('September')" title="Menuri">September</button>
-  <button class="month-button" data-month="October" onclick="openForm('October')" title="Thilini">October</button>
-  <button class="month-button" data-month="November" onclick="openForm('November')" title="Anushika">November</button>
-  <button class="month-button" data-month="December" onclick="openForm('December')" title="Sandaru">December</button>
-  <button class="month-button" data-month="January" onclick="openForm('January')" title="Geethika">January</button>
-  <button class="month-button" data-month="February" onclick="openForm('February')" title="Chathuranga">February</button>
-  <button class="month-button" data-month="March" onclick="openForm('March')" title="Chamindu">March</button>
-  <button class="month-button" data-month="April" onclick="openForm('April')" title="Sachintha">April</button>
-  <button class="month-button" data-month="May" onclick="openForm('May')" title="Nisansala">May</button>
-  <button class="month-button" data-month="June" onclick="openForm('June')" title="Malshani">June</button>
-</div>
+  <div class="month-container">
+    <button class="month-button" data-month="August" onclick="openForm('August')" title="Dilum">August</button>
+    <button class="month-button" data-month="September" onclick="openForm('September')" title="Menuri">September</button>
+    <button class="month-button" data-month="October" onclick="openForm('October')" title="Thilini">October</button>
+    <button class="month-button" data-month="November" onclick="openForm('November')" title="Anushika">November</button>
+    <button class="month-button" data-month="December" onclick="openForm('December')" title="Sandaru">December</button>
+    <button class="month-button" data-month="January" onclick="openForm('January')" title="Geethika">January</button>
+    <button class="month-button" data-month="February" onclick="openForm('February')" title="Chathuranga">February</button>
+    <button class="month-button" data-month="March" onclick="openForm('March')" title="Chamindu">March</button>
+    <button class="month-button" data-month="April" onclick="openForm('April')" title="Sachintha">April</button>
+    <button class="month-button" data-month="May" onclick="openForm('May')" title="Nisansala">May</button>
+    <button class="month-button" data-month="June" onclick="openForm('June')" title="Malshani">June</button>
+  </div>
 
   <div id="subForm" class="modal">
     <div class="modal-content">
