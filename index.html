@@ -125,10 +125,6 @@
       color: #00ffaa;
     }
 
-    .member-row input[type="number"] {
-      width: 100px;
-    }
-
     .member-row input[type="checkbox"] {
       transform: scale(1.2);
     }
@@ -178,7 +174,6 @@
       <div class="summary-box" id="totalPaidBox">Total Paid: Rs. 0</div>
       <div class="form-buttons">
         <button onclick="saveData()">💾 Save</button>
-        <button onclick="editForm()">✏️ Edit</button>
         <button onclick="closeForm()">❌ Close</button>
       </div>
     </div>
@@ -186,13 +181,12 @@
 
   <script>
     const members = [
-      "Dilum", "Menuri", "Thilini", "Anushika", "Sandaru", "Geethika",
+      "Dium", "Menuri", "Thilini", "Anushika", "Sandaru", "Geethika",
       "Chathuranga", "Chamindu", "Sachintha", "Nisansala", "Malshani"
     ];
 
     let currentMonth = "";
     let dataStore = {};
-    let isEditable = false;
 
     window.onload = () => {
       const saved = localStorage.getItem("seettuData");
@@ -201,7 +195,6 @@
 
     function openForm(month) {
       currentMonth = month;
-      isEditable = false;
       document.getElementById("formTitle").textContent = `📋 ${month} Contributions - Rs. 10,000 Each`;
       document.getElementById("subForm").style.display = "flex";
       renderForm(month);
@@ -214,9 +207,8 @@
       let totalPaid = 0;
 
       members.forEach(member => {
-        const value = (dataStore[month] && dataStore[month][member]?.amount) || 10000;
         const paid = (dataStore[month] && dataStore[month][member]?.paid) || false;
-        if (paid) totalPaid += Number(value);
+        if (paid) totalPaid += 10000;
 
         const row = document.createElement("div");
         row.className = "member-row";
@@ -224,12 +216,9 @@
         row.innerHTML = `
           <div class="member-left">
             <input type="checkbox" id="chk-${member}" ${paid ? "checked" : ""} onchange="togglePaid('${member}', this.checked)">
-            <span>${member}</span>
+            <span title="Member: ${member}">${member}</span>
           </div>
-          ${isEditable ?
-            `<input type="number" id="amount-${member}" value="${value}">` :
-            `<span>Rs. ${value}</span>`
-          }
+          <span>Rs. 10000</span>
         `;
 
         container.appendChild(row);
@@ -239,39 +228,36 @@
     }
 
     function togglePaid(member, checked) {
-      if (!dataStore[currentMonth]) dataStore[currentMonth] = {};
-      if (!dataStore[currentMonth][member]) dataStore[currentMonth][member] = { amount: 10000 };
-      dataStore[currentMonth][member].paid = checked;
-      saveToLocal();
-      renderForm(currentMonth);
-    }
-
-    function editForm() {
-      isEditable = true;
-      renderForm(currentMonth);
-    }
-
-    function saveData() {
-      if (!isEditable) {
-        alert("Click ✏️ Edit before saving.");
+      const password = prompt("🔒 Enter admin password to update status:");
+      if (password !== "1234") {
+        alert("❌ Incorrect password. Action cancelled.");
+        document.getElementById(`chk-${member}`).checked = !checked;
         return;
       }
 
       if (!dataStore[currentMonth]) dataStore[currentMonth] = {};
+      dataStore[currentMonth][member] = {
+        amount: 10000,
+        paid: checked
+      };
+
+      saveToLocal();
+      renderForm(currentMonth);
+    }
+
+    function saveData() {
+      if (!dataStore[currentMonth]) dataStore[currentMonth] = {};
 
       members.forEach(member => {
-        const input = document.getElementById(`amount-${member}`);
-        if (input) {
-          const paid = dataStore[currentMonth][member]?.paid || false;
-          dataStore[currentMonth][member] = {
-            amount: input.value,
-            paid: paid
-          };
-        }
+        const paid = dataStore[currentMonth][member]?.paid || false;
+        dataStore[currentMonth][member] = {
+          amount: 10000,
+          paid: paid
+        };
       });
 
       saveToLocal();
-      isEditable = false;
+      alert("✅ Data Saved!");
       renderForm(currentMonth);
     }
 
